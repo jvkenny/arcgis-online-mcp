@@ -1,0 +1,12 @@
+.git/
+.github/
+tests/
+__pycache__/
+*.pyc
+.env*
+.mcp.json
+dist/
+*.mcpb
+pyproject.toml
+build/
+*.egg-info/

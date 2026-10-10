@@ -1,0 +1,181 @@
+{
+  "manifest_version": "0.2",
+  "name": "arcgis-online-mcp",
+  "display_name": "ArcGIS Online",
+  "version": "0.1.0",
+  "description": "Search, inspect, query, summarize, and geocode with ArcGIS Online or ArcGIS Enterprise. Edits and publishing are opt-in.",
+  "long_description": "An open-source MCP server for ArcGIS Online and ArcGIS Enterprise portals. Read-only by default: search content, inspect items, web maps, services and layers, query and aggregate features, and geocode. Turn on 'Allow edits' to add/update/delete features, publish GeoJSON as hosted layers, build web maps, and change sharing — with dry runs and confirmation gates. Pure Python standard library; no dependencies.",
+  "author": {
+    "name": "John Kenny",
+    "url": "https://github.com/jvkenny"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jvkenny/arcgis-online-mcp"
+  },
+  "homepage": "https://github.com/jvkenny/arcgis-online-mcp",
+  "documentation": "https://github.com/jvkenny/arcgis-online-mcp#readme",
+  "support": "https://github.com/jvkenny/arcgis-online-mcp/issues",
+  "license": "MIT",
+  "keywords": [
+    "arcgis",
+    "gis",
+    "maps",
+    "esri",
+    "geospatial",
+    "geocoding"
+  ],
+  "server": {
+    "type": "python",
+    "entry_point": "server.py",
+    "mcp_config": {
+      "command": "python3",
+      "args": [
+        "${__dirname}/server.py"
+      ],
+      "env": {
+        "ARCGIS_PORTAL_URL": "${user_config.portal_url}",
+        "ARCGIS_CLIENT_ID": "${user_config.client_id}",
+        "ARCGIS_API_KEY": "${user_config.api_key}",
+        "ARCGIS_USERNAME": "${user_config.username}",
+        "ARCGIS_PASSWORD": "${user_config.password}",
+        "ARCGIS_ALLOW_WRITES": "${user_config.allow_writes}"
+      },
+      "platform_overrides": {
+        "win32": {
+          "command": "python"
+        }
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "whoami",
+      "description": "Show which portal this server talks to, the auth mode, the signed-in user (if any) with key privileges, and whether write tools are enabled. Call this first if anything is unclear."
+    },
+    {
+      "name": "sign_in",
+      "description": "Sign in to ArcGIS with OAuth (works with SAML/enterprise logins). Opens the ArcGIS login page in the user's browser and waits for them to finish. Returns a sign_in_url if the browser didn't open."
+    },
+    {
+      "name": "sign_out",
+      "description": "Forget the cached OAuth tokens for this portal."
+    },
+    {
+      "name": "search_content",
+      "description": "Search portal items (maps, layers, apps, files). Uses ArcGIS search syntax in `q` (e.g. 'parcels', 'title:\"Fire Hydrants\"', 'tags:transportation'). Combine with filters. Returns item IDs, types, owners, and service URLs for follow-up tools."
+    },
+    {
+      "name": "get_item",
+      "description": "Get an item's details: title, type, owner, description, tags, sharing, URL. For web maps, also lists the layers inside (with URLs and filters); for services, lists the layers/tables."
+    },
+    {
+      "name": "get_item_data",
+      "description": "Get the raw JSON definition behind an item (web map JSON, app/dashboard configuration, etc.). Large definitions are truncated to max_chars."
+    },
+    {
+      "name": "list_user_content",
+      "description": "List a user's folders and items (defaults to the signed-in user). Use `folder` to look inside one folder."
+    },
+    {
+      "name": "search_groups",
+      "description": "Find groups. With my_groups=true (default when signed in and no q), lists the signed-in user's groups."
+    },
+    {
+      "name": "describe_service",
+      "description": "Describe a Feature/Map/Image service: description, capabilities, spatial reference, and its layers and tables."
+    },
+    {
+      "name": "describe_layer",
+      "description": "Describe one layer or table: fields (types, aliases, coded-value domains), geometry type, record count, WGS84 extent, subtypes, relationships, and capabilities. Read this before querying so `where` clauses use real field names and codes."
+    },
+    {
+      "name": "query_features",
+      "description": "Query features from a layer or table with SQL `where`, optional spatial filter (bbox or near-point), field selection, ordering, and paging. Geometry is returned as GeoJSON in WGS84 when return_geometry=true. For big pulls set save_to (a local .geojson/.csv path) and limit up to 100000; the file gets the full result and only a summary comes back. Dates are returned as ISO-8601 UTC."
+    },
+    {
+      "name": "summarize_features",
+      "description": "Aggregate a layer server-side: counts, sums, averages, min/max, optionally grouped by fields (SQL GROUP BY). With group_by and no statistics it returns each distinct value and its count — use it to list unique values."
+    },
+    {
+      "name": "geocode",
+      "description": "Find coordinates for an address, place name, or point of interest using the ArcGIS World Geocoding Service (or your portal's geocoder). Returns ranked candidates in WGS84. Signed-in/API-key geocoding may consume ArcGIS credits; results are not stored."
+    },
+    {
+      "name": "reverse_geocode",
+      "description": "Find the nearest address/place for a WGS84 coordinate."
+    },
+    {
+      "name": "apply_edits",
+      "description": "Add, update, and/or delete features in an editable layer, applied as one transaction (rolled back on any failure). Geometries are GeoJSON in WGS84. Updates must include the object ID field. Deletes require confirm_delete=true; run with dry_run=true first to preview counts."
+    },
+    {
+      "name": "create_hosted_layer",
+      "description": "Publish GeoJSON (WGS84) as a new hosted feature layer owned by the signed-in user. Pass a FeatureCollection inline (`geojson`) or a local file path (`geojson_path`). The new layer is private."
+    },
+    {
+      "name": "create_webmap",
+      "description": "Create a web map item from layers (by URL or item ID) on a basemap, ready to open in Map Viewer. Feature service items expand to all their layers. The new map is private."
+    },
+    {
+      "name": "update_item",
+      "description": "Update an item's metadata: title, summary (snippet), description, tags, credits, terms of use."
+    },
+    {
+      "name": "share_item",
+      "description": "Change who can see an item: set access (private / org / public) and/or share to or unshare from groups. Making something public requires confirm_public=true."
+    }
+  ],
+  "user_config": {
+    "portal_url": {
+      "type": "string",
+      "title": "Portal URL",
+      "description": "https://www.arcgis.com for ArcGIS Online, or your Enterprise portal (e.g. https://gis.example.gov/portal).",
+      "default": "https://www.arcgis.com",
+      "required": false
+    },
+    "client_id": {
+      "type": "string",
+      "title": "OAuth client ID (recommended for orgs)",
+      "description": "Client ID of an OAuth app in your portal with redirect URL http://127.0.0.1:7071/callback. Lets you sign in in the browser, including SAML/enterprise logins.",
+      "required": false
+    },
+    "api_key": {
+      "type": "string",
+      "title": "API key",
+      "description": "An ArcGIS API key / developer credential. Alternative to OAuth.",
+      "sensitive": true,
+      "required": false
+    },
+    "username": {
+      "type": "string",
+      "title": "Username (built-in accounts only)",
+      "description": "Only for built-in ArcGIS accounts; SAML users should use OAuth.",
+      "required": false
+    },
+    "password": {
+      "type": "string",
+      "title": "Password",
+      "description": "Password for the built-in account.",
+      "sensitive": true,
+      "required": false
+    },
+    "allow_writes": {
+      "type": "boolean",
+      "title": "Allow edits and publishing",
+      "description": "Expose tools that edit features, publish layers, create web maps, and change sharing. Off = read-only.",
+      "default": false,
+      "required": false
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "python": ">=3.9"
+    }
+  }
+}

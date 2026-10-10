@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "arcgis": {
+      "command": "python3",
+      "args": ["server.py"],
+      "env": {
+        "ARCGIS_PORTAL_URL": "${ARCGIS_PORTAL_URL:-https://www.arcgis.com}",
+        "ARCGIS_API_KEY": "${ARCGIS_API_KEY:-}",
+        "ARCGIS_CLIENT_ID": "${ARCGIS_CLIENT_ID:-}",
+        "ARCGIS_ALLOW_WRITES": "${ARCGIS_ALLOW_WRITES:-false}"
+      }
+    }
+  }
+}

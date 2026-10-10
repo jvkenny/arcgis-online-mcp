@@ -1,0 +1,23 @@
+name: tests
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 13 * * 1"   # weekly live run catches ArcGIS REST API drift
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Offline tests (protocol, schemas, geometry, write guards)
+        run: python -m unittest tests.test_offline tests.test_write_guards -v
+      - name: Live tests against public ArcGIS Online content
+        run: python -m unittest tests.test_live -v

@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arcgis-online-mcp"
+dynamic = ["version"]
+description = "MCP server for ArcGIS Online and ArcGIS Enterprise: search, inspect, query, summarize, geocode, and (opt-in) edit and publish."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = []
+authors = [{ name = "John Kenny" }]
+keywords = ["mcp", "arcgis", "arcgis-online", "gis", "esri", "claude", "model-context-protocol"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: GIS",
+]
+
+[project.urls]
+Homepage = "https://github.com/jvkenny/arcgis-online-mcp"
+Issues = "https://github.com/jvkenny/arcgis-online-mcp/issues"
+
+[project.scripts]
+arcgis-online-mcp = "arcgis_online_mcp.server:main"
+
+[tool.setuptools]
+packages = ["arcgis_online_mcp"]
+
+[tool.setuptools.dynamic]
+version = { attr = "arcgis_online_mcp.__version__" }
